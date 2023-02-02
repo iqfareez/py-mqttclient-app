@@ -8,7 +8,7 @@ message payloads. I make this just for fun hehe.
 
 ## Screenshot
 
-[//]: # (will be added)
+![Screenshot](https://i.imgur.com/diT8Soi.png)
 
 ## Installation
 

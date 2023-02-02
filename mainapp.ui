@@ -26,32 +26,6 @@
     <property name="title">
      <string>Connecttivity</string>
     </property>
-    <widget class="QPlainTextEdit" name="brokerAddrTextbox">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>241</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="placeholderText">
-      <string>Broker address</string>
-     </property>
-    </widget>
-    <widget class="QPlainTextEdit" name="brokerPortTextbox">
-     <property name="geometry">
-      <rect>
-       <x>270</x>
-       <y>40</y>
-       <width>201</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="placeholderText">
-      <string>Port (1883)</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="connectButton">
      <property name="geometry">
       <rect>
@@ -63,6 +37,32 @@
      </property>
      <property name="text">
       <string>Connect</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="brokerAddrTextbox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>231</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Broker address</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="brokerPortTextbox">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>40</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Port</string>
      </property>
     </widget>
    </widget>
@@ -78,6 +78,45 @@
     <property name="title">
      <string>Publish</string>
     </property>
+    <widget class="QTextEdit" name="topicTextbox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>171</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Topic</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="messageTextbox">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>40</y>
+       <width>181</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Message</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="sendMessageButton">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>30</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Send</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
