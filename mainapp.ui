@@ -20,7 +20,7 @@
       <x>30</x>
       <y>30</y>
       <width>741</width>
-      <height>101</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
@@ -32,7 +32,7 @@
        <x>510</x>
        <y>40</y>
        <width>93</width>
-       <height>28</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -44,7 +44,7 @@
       <rect>
        <x>20</x>
        <y>40</y>
-       <width>231</width>
+       <width>261</width>
        <height>31</height>
       </rect>
      </property>
@@ -55,9 +55,9 @@
     <widget class="QTextEdit" name="brokerPortTextbox">
      <property name="geometry">
       <rect>
-       <x>270</x>
+       <x>290</x>
        <y>40</y>
-       <width>221</width>
+       <width>201</width>
        <height>31</height>
       </rect>
      </property>
@@ -65,12 +65,30 @@
       <string>Port</string>
      </property>
     </widget>
+    <widget class="QLabel" name="connectionStatusLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>171</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Disconnected</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>200</y>
       <width>741</width>
       <height>91</height>
      </rect>

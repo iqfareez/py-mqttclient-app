@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit, QLabel
 from PyQt5 import uic
 import paho.mqtt.client as mqtt
 import sys
@@ -17,6 +17,7 @@ class MainApp(QMainWindow):
         self.brokerAddrTextbox = self.findChild(QTextEdit, 'brokerAddrTextbox')
         self.brokerPortTextbox = self.findChild(QTextEdit, 'brokerPortTextbox')
         self.connectButton = self.findChild(QPushButton, 'connectButton')
+        self.connectionStatusLabel = self.findChild(QLabel, 'connectionStatusLabel')
 
         # reference widgets (Publishing)
         self.topicTextbox = self.findChild(QTextEdit, 'topicTextbox')
@@ -29,32 +30,49 @@ class MainApp(QMainWindow):
         # self.client.on_message = on_message
         self.client.on_disconnect = self.on_disconnect
 
+        self.mqtt_connected = False
+
         # set default port textfield to 1883
         self.brokerPortTextbox.setPlainText("1883")
 
         # connect button
-        self.connectButton.clicked.connect(self.connect_button_clicked)
+        self.connectButton.clicked.connect(self.handle_connect_click)
         self.sendMessageButton.clicked.connect(self.send_message_button_clicked)
 
-    def connect_button_clicked(self):
+    def handle_connect_click(self):
         print("connect button clicked")
-        broker_addr = self.brokerAddrTextbox.toPlainText()
-        broker_port = int(self.brokerPortTextbox.toPlainText())
+        if not self.mqtt_connected:
+            broker_addr = self.brokerAddrTextbox.toPlainText()
+            broker_port = int(self.brokerPortTextbox.toPlainText())
 
-        if broker_addr == "" or broker_port == "":
-            QMessageBox.about(self, "Error", "Please fill in broker address and port")
+            if broker_addr == "" or broker_port == "":
+                QMessageBox.about(self, "Error", "Please fill in broker address and port")
+            else:
+                print(f'Connecting now to {broker_addr}:{broker_port}')
+                self.client.connect(broker_addr, broker_port, 60)
+                self.client.loop_start()
+
         else:
-            print(f'Connecting now to {broker_addr}:{broker_port}')
-            self.client.connect(broker_addr, broker_port, 60)
-            self.client.loop_start()
-            # QMessageBox.about(self, "Success", "Broker address and port are filled in")
+            self.client.disconnect()
 
     def on_connect(self, *args):
         print(f"connected to broker. Result code:{args[3]}")
-        print("Connected to broker")
+        # show connected status with green color
+        self.connectionStatusLabel.setStyleSheet("QLabel { color : green; }")
+        self.connectionStatusLabel.setText("Connected")
+        # update connect button label
+        self.connectButton.setText("Disconnect")
+        self.mqtt_connected = True
 
     def on_disconnect(self, *args):
         print("Disconnected from broker")
+        # update status label with red color
+        self.connectionStatusLabel.setStyleSheet("QLabel { color : red; }")
+        self.connectionStatusLabel.setText("Disconnected")
+        # update connect button and function
+        self.connectButton.setText("Connect")
+        self.mqtt_connected = False
+        # stop loop
         self.client.loop_stop()
 
     # publish a message to a topic
@@ -64,8 +82,6 @@ class MainApp(QMainWindow):
         message = self.messageTextbox.toPlainText()
         print(f'Publishing message: {message} to topic: {topic}')
         self.client.publish(topic, message)
-
-
 
 
 def main():
