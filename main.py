@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit, QLabel, QLineEdit
 from PyQt5 import uic
 import paho.mqtt.client as mqtt
 import sys
@@ -14,15 +14,15 @@ class MainApp(QMainWindow):
         uic.loadUi(os.path.join(ui_path, "mainapp.ui"), self)
 
         # reference widgets (Connectivity)
-        self.brokerAddrTextbox = self.findChild(QTextEdit, 'brokerAddrTextbox')
-        self.brokerPortTextbox = self.findChild(QTextEdit, 'brokerPortTextbox')
-        self.connectButton = self.findChild(QPushButton, 'connectButton')
-        self.connectionStatusLabel = self.findChild(QLabel, 'connectionStatusLabel')
+        self.brokerAddrTextbox : QLineEdit = self.findChild(QLineEdit, 'brokerAddrTextbox')
+        self.brokerPortTextbox : QLineEdit = self.findChild(QLineEdit, 'brokerPortTextbox')
+        self.connectButton : QPushButton = self.findChild(QPushButton, 'connectButton')
+        self.connectionStatusLabel : QLabel = self.findChild(QLabel, 'connectionStatusLabel')
 
         # reference widgets (Publishing)
-        self.topicTextbox = self.findChild(QTextEdit, 'topicTextbox')
-        self.messageTextbox = self.findChild(QTextEdit, 'messageTextbox')
-        self.sendMessageButton = self.findChild(QPushButton, 'sendMessageButton')
+        self.topicTextbox : QLineEdit = self.findChild(QLineEdit, 'topicTextbox')
+        self.messageTextbox : QTextEdit = self.findChild(QTextEdit, 'messageTextbox')
+        self.sendMessageButton : QPushButton = self.findChild(QPushButton, 'sendMessageButton')
 
         # mqtt client
         self.client = mqtt.Client()
@@ -32,18 +32,16 @@ class MainApp(QMainWindow):
 
         self.mqtt_connected = False
 
-        # set default port textfield to 1883
-        self.brokerPortTextbox.setPlainText("1883")
-
         # connect button
         self.connectButton.clicked.connect(self.handle_connect_click)
         self.sendMessageButton.clicked.connect(self.send_message_button_clicked)
 
     def handle_connect_click(self):
-        print("connect button clicked")
+        """connect/disconnect to broker according its current state"""
+
         if not self.mqtt_connected:
-            broker_addr = self.brokerAddrTextbox.toPlainText()
-            broker_port = int(self.brokerPortTextbox.toPlainText())
+            broker_addr = self.brokerAddrTextbox.text()
+            broker_port = int(self.brokerPortTextbox.text())
 
             if broker_addr == "" or broker_port == "":
                 QMessageBox.about(self, "Error", "Please fill in broker address and port")
@@ -75,12 +73,14 @@ class MainApp(QMainWindow):
         # stop loop
         self.client.loop_stop()
 
-    # publish a message to a topic
     def send_message_button_clicked(self, *args):
+        """publish a message to a topic"""
+
         # read topic and message from topic textbox
-        topic = self.topicTextbox.toPlainText()
+        topic = self.topicTextbox.text()
         message = self.messageTextbox.toPlainText()
         print(f'Publishing message: {message} to topic: {topic}')
+        # publish message
         self.client.publish(topic, message)
 
 
