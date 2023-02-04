@@ -6,13 +6,13 @@
 
 :construction: This project is still **under development**. :construction:
 
-Simple PyQt5 and Python based MQTT client application. It uses the Paho MQTT library for 
+Simple PyQt5 and Python based **MQTT client application**. It uses the Paho MQTT library for 
 communication with MQTT brokers, and can be used for publishing and subscribing to topics, as well as for viewing 
 message payloads. I make this just for fun hehe to get myself exposed to QT framework.
 
 ## Screenshot
 
-![Screenshot](https://i.imgur.com/diT8Soi.png)
+![Screenshot](https://i.imgur.com/zpy1lxh.png)
 
 ## Get started
 

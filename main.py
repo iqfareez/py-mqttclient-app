@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit, QLabel, QLineEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QMessageBox, QTextEdit, QLabel, QLineEdit, \
+    QTableWidgetItem, QTableWidget
 from PyQt5 import uic
 import paho.mqtt.client as mqtt
 import sys
@@ -14,20 +15,25 @@ class MainApp(QMainWindow):
         uic.loadUi(os.path.join(ui_path, "mainapp.ui"), self)
 
         # reference widgets (Connectivity)
-        self.brokerAddrTextbox : QLineEdit = self.findChild(QLineEdit, 'brokerAddrTextbox')
-        self.brokerPortTextbox : QLineEdit = self.findChild(QLineEdit, 'brokerPortTextbox')
-        self.connectButton : QPushButton = self.findChild(QPushButton, 'connectButton')
-        self.connectionStatusLabel : QLabel = self.findChild(QLabel, 'connectionStatusLabel')
+        self.brokerAddrTextbox: QLineEdit = self.findChild(QLineEdit, 'brokerAddrTextbox')
+        self.brokerPortTextbox: QLineEdit = self.findChild(QLineEdit, 'brokerPortTextbox')
+        self.connectButton: QPushButton = self.findChild(QPushButton, 'connectButton')
+        self.connectionStatusLabel: QLabel = self.findChild(QLabel, 'connectionStatusLabel')
 
         # reference widgets (Publishing)
-        self.topicTextbox : QLineEdit = self.findChild(QLineEdit, 'topicTextbox')
-        self.messageTextbox : QTextEdit = self.findChild(QTextEdit, 'messageTextbox')
-        self.sendMessageButton : QPushButton = self.findChild(QPushButton, 'sendMessageButton')
+        self.publishTopicTextbox: QLineEdit = self.findChild(QLineEdit, 'publishTopicTextbox')
+        self.messageTextbox: QTextEdit = self.findChild(QTextEdit, 'messageTextbox')
+        self.sendMessageButton: QPushButton = self.findChild(QPushButton, 'sendMessageButton')
+
+        # reference widgets (Subscribing)
+        self.subscribeTopicTextbox: QLineEdit = self.findChild(QLineEdit, 'subscribeTopicTextbox')
+        self.addSubscriptionButton: QPushButton = self.findChild(QPushButton, 'addSubscriptionButton')
+        self.incomingMessageTable: QTableWidget = self.findChild(QTableWidget, 'incomingMessagesTable')
 
         # mqtt client
         self.client = mqtt.Client()
         self.client.on_connect = self.on_connect
-        # self.client.on_message = on_message
+        self.client.on_message = self.on_message
         self.client.on_disconnect = self.on_disconnect
 
         self.mqtt_connected = False
@@ -35,6 +41,11 @@ class MainApp(QMainWindow):
         # connect button
         self.connectButton.clicked.connect(self.handle_connect_click)
         self.sendMessageButton.clicked.connect(self.send_message_button_clicked)
+        self.addSubscriptionButton.clicked.connect(self.add_subscription_button_clicked)
+
+        # initial UI setup
+        self.incomingMessageTable.setColumnCount(2)
+        self.incomingMessageTable.setHorizontalHeaderLabels(['Topic', 'Message'])
 
     def handle_connect_click(self):
         """connect/disconnect to broker according its current state"""
@@ -73,15 +84,34 @@ class MainApp(QMainWindow):
         # stop loop
         self.client.loop_stop()
 
+    def on_message(self, client, userdata, message):
+        print(f"Received message: {message.payload.decode()} on topic: {message.topic}")
+
+        # add topic and message to QTableWidget rows
+        row_position = self.incomingMessageTable.rowCount()
+        self.incomingMessageTable.insertRow(row_position)
+
+        self.incomingMessageTable.setItem(row_position, 0, QTableWidgetItem(message.topic))
+        self.incomingMessageTable.setItem(row_position, 1, QTableWidgetItem(message.payload.decode()))
+
     def send_message_button_clicked(self, *args):
         """publish a message to a topic"""
 
         # read topic and message from topic textbox
-        topic = self.topicTextbox.text()
+        topic = self.publishTopicTextbox.text()
         message = self.messageTextbox.toPlainText()
         print(f'Publishing message: {message} to topic: {topic}')
         # publish message
         self.client.publish(topic, message)
+
+    def add_subscription_button_clicked(self, *args):
+        """add a subscription to a topic"""
+
+        # read topic from topic textbox
+        topic = self.subscribeTopicTextbox.text()
+        print(f'Adding subscription to topic: {topic}')
+        # subscribe to topic
+        self.client.subscribe(topic)
 
 
 def main():
